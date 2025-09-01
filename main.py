@@ -4,6 +4,7 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from services.deep_services import transcribe_audio
+from mangum import Mangum
 
 app = FastAPI()
 
@@ -85,3 +86,10 @@ async def audio_to_text_endpoint(file: UploadFile = File(...)):
 @app.get("/")
 def root():
     return {"message": "Groq + FastAPI server is running!"}
+
+
+handler = Mangum(app)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
